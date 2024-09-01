@@ -4,9 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b1cd3d4a-4592-4a69-a237-7034910493dc" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.github/workflows/deploy-to-GCP-GKE.yml" beforeDir="false" afterPath="$PROJECT_DIR$/.github/workflows/deploy-to-GCP-GKE.yml" afterDir="false" />
-    </list>
+    <list default="true" id="b1cd3d4a-4592-4a69-a237-7034910493dc" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -71,7 +69,7 @@
       <option name="presentableId" value="Default" />
       <updated>1725205700404</updated>
       <workItem from="1725205701441" duration="190000" />
-      <workItem from="1725205896400" duration="594000" />
+      <workItem from="1725205896400" duration="907000" />
     </task>
     <servers />
   </component>
