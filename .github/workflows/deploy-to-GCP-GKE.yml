@@ -175,11 +175,14 @@ jobs:
 
       - name: Initialize Terraform
         run: terraform init
+        working-directory: terraform
 
       - name: Apply Terraform
         run: terraform apply -auto-approve
+        working-directory: terraform
 
       - name: Verify Deployment
         run: |
           IP=$(terraform output -raw service_ip)
           curl -f http://$IP/time
+        working-directory: terraform
