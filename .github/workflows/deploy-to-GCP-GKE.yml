@@ -163,6 +163,7 @@ jobs:
           docker push gcr.io/${{ secrets.GCP_PROJECT_ID }}/time-api:latest
 
   create-cluster:
+    needs: buildImage
     runs-on: ubuntu-latest
 
     steps:
