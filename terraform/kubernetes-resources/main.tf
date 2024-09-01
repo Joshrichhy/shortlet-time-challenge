@@ -47,26 +47,26 @@ resource "google_project_iam_binding" "gke_sa_role" {
   members = ["serviceAccount:${google_service_account.gke_service_account.email}"]
 }
 
-# Create GKE Cluster
-resource "google_container_cluster" "primary" {
-  name     = "gke-cluster"
-  location = var.region
-
-  networking_mode = "VPC_NATIVE"
-  network         = google_compute_network.vpc_network.id
-  subnetwork      = google_compute_subnetwork.subnet.id
-
-  remove_default_node_pool = true
-  initial_node_count       = 1
-  deletion_protection = false
-
-  ip_allocation_policy {}
-
-  # Assign service account
-  node_config {
-    service_account = google_service_account.gke_service_account.email
-  }
-}
+# # Create GKE Cluster
+# resource "google_container_cluster" "primary" {
+#   name     = "gke-cluster"
+#   location = var.region
+#
+#   networking_mode = "VPC_NATIVE"
+#   network         = google_compute_network.vpc_network.id
+#   subnetwork      = google_compute_subnetwork.subnet.id
+#
+#   remove_default_node_pool = true
+#   initial_node_count       = 1
+#   deletion_protection = false
+#
+#   ip_allocation_policy {}
+#
+#   # Assign service account
+#   node_config {
+#     service_account = google_service_account.gke_service_account.email
+#   }
+# }
 
 resource "google_container_node_pool" "primary_nodes" {
   name       = "node-pool"
