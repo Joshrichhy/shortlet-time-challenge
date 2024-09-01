@@ -7,45 +7,45 @@ provider "kubernetes" {
   config_path = "~/.kube/config"  # Path to your kubeconfig file
 }
 
-resource "google_compute_network" "vpc_network" {
-  name = "my-vpc-network"
-}
-
-# Create subnets
-resource "google_compute_subnetwork" "subnet" {
-  name          = "gke-subnet"
-  ip_cidr_range = "10.0.0.0/24"
-  network       = google_compute_network.vpc_network.id
-  region        = var.region
-}
-
-# Create a NAT Gateway
-resource "google_compute_router" "nat_router" {
-  name    = "nat-router"
-  network = google_compute_network.vpc_network.id
-  region  = var.region
-}
-
-resource "google_compute_router_nat" "nat_gw" {
-  name                               = "nat-gateway"
-  router                             = google_compute_router.nat_router.name
-  region                             = var.region
-  nat_ip_allocate_option             = "AUTO_ONLY"
-  source_subnetwork_ip_ranges_to_nat = "ALL_SUBNETWORKS_ALL_IP_RANGES"
-}
-
-# Create Service Account for GKE
-resource "google_service_account" "gke_service_account" {
-  account_id   = "gke-service-account"
-  display_name = "GKE Service Account"
-}
-
-# Assign roles to the service account
-resource "google_project_iam_binding" "gke_sa_role" {
-  project = var.project_id
-  role    = "roles/container.clusterAdmin"
-  members = ["serviceAccount:${google_service_account.gke_service_account.email}"]
-}
+# resource "google_compute_network" "vpc_network" {
+#   name = "my-vpc-network"
+# }
+#
+# # Create subnets
+# resource "google_compute_subnetwork" "subnet" {
+#   name          = "gke-subnet"
+#   ip_cidr_range = "10.0.0.0/24"
+#   network       = google_compute_network.vpc_network.id
+#   region        = var.region
+# }
+#
+# # Create a NAT Gateway
+# resource "google_compute_router" "nat_router" {
+#   name    = "nat-router"
+#   network = google_compute_network.vpc_network.id
+#   region  = var.region
+# }
+#
+# resource "google_compute_router_nat" "nat_gw" {
+#   name                               = "nat-gateway"
+#   router                             = google_compute_router.nat_router.name
+#   region                             = var.region
+#   nat_ip_allocate_option             = "AUTO_ONLY"
+#   source_subnetwork_ip_ranges_to_nat = "ALL_SUBNETWORKS_ALL_IP_RANGES"
+# }
+#
+# # Create Service Account for GKE
+# resource "google_service_account" "gke_service_account" {
+#   account_id   = "gke-service-account"
+#   display_name = "GKE Service Account"
+# }
+#
+# # Assign roles to the service account
+# resource "google_project_iam_binding" "gke_sa_role" {
+#   project = var.project_id
+#   role    = "roles/container.clusterAdmin"
+#   members = ["serviceAccount:${google_service_account.gke_service_account.email}"]
+# }
 
 # # Create GKE Cluster
 # resource "google_container_cluster" "primary" {
