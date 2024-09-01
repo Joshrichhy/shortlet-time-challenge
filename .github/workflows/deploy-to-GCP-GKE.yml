@@ -153,14 +153,14 @@ jobs:
           version: 'latest'
           install_components: 'kubectl'
 
-      - name: Get GKE credentials
-        run: gcloud container clusters get-credentials gke-cluster --zone us-central1
-
-      - name: Set up kubeconfig for Terraform
-        run: |
-          mkdir -p ~/.kube
-          gcloud container clusters get-credentials gke-cluster --zone us-central1 --project ${{ secrets.GCP_PROJECT_ID }}
-          echo "KUBECONFIG generated"
+#      - name: Get GKE credentials
+#        run: gcloud container clusters get-credentials gke-cluster --zone us-central1
+#
+#      - name: Set up kubeconfig for Terraform
+#        run: |
+#          mkdir -p ~/.kube
+#          gcloud container clusters get-credentials gke-cluster --zone us-central1 --project ${{ secrets.GCP_PROJECT_ID }}
+#          echo "KUBECONFIG generated"
 
       - name: Authenticate Docker to Google Container Registry
         run: gcloud auth configure-docker
