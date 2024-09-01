@@ -9,3 +9,8 @@ output "cluster_endpoint" {
 output "service_ip" {
   value = kubernetes_service.time_service.status[0].load_balancer[0].ingress[0].ip
 }
+
+
+output "cluster_zone" {
+  value = google_container_cluster.gke_cluster.location
+}

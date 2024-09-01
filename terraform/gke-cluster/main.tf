@@ -26,10 +26,3 @@ resource "google_container_cluster" "gke_cluster" {
 }
 
 
-output "cluster_name" {
-  value = google_container_cluster.gke_cluster.name
-}
-
-output "cluster_zone" {
-  value = google_container_cluster.gke_cluster.location
-}
