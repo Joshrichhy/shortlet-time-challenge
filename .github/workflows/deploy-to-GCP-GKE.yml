@@ -205,7 +205,7 @@ jobs:
 
       - name: Get GKE credentials
         run: |
-          gcloud container clusters get-credentials time-gke-cluster --zone us-central1 --project ${{ secrets.GCP_PROJECT_ID }}
+          gcloud container clusters get-credentials api-time-kube-cluster --zone us-central1 --project ${{ secrets.GCP_PROJECT_ID }}
         working-directory: terraform/gke-cluster
 
   configure-k8s:
@@ -244,7 +244,7 @@ jobs:
       - name: Set up Kubernetes config
         run: |
           mkdir -p ~/.kube
-          gcloud container clusters get-credentials time-gke-cluster --zone us-central1 --project ${{ secrets.GCP_PROJECT_ID }}
+          gcloud container clusters get-credentials api-time-kube-cluster --zone us-central1 --project ${{ secrets.GCP_PROJECT_ID }}
 
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v1
@@ -281,10 +281,10 @@ jobs:
           name: gke-cluster
           path: terraform/gke-cluster
 
-      - name: Download GKE cluster directory
+      - name: Download kubernetes resources directory
         uses: actions/download-artifact@v3
         with:
-          name: gke-cluster
+          name: kubernetes resources
           path: terraform/kubernetes-resources
 
       - name: Set up Google Cloud SDK
@@ -328,10 +328,10 @@ jobs:
           name: gke-cluster
           path: terraform/gke-cluster
 
-      - name: Download GKE cluster directory
+      - name: Download Kubernetes Resources directory
         uses: actions/download-artifact@v3
         with:
-          name: gke-cluster
+          name: kubernetes resources
           path: terraform/kubernetes-resources
 
       - name: Wait before cleanup

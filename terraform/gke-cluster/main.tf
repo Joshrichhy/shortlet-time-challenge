@@ -4,12 +4,12 @@ provider "google" {
 }
 
 resource "google_compute_network" "vpc_network" {
-  name = "time-api-vpc-network"
+  name = "api-time-vpc-network"
 }
 
 
 resource "google_compute_subnetwork" "subnet" {
-  name          = "gke-cluster-subnet"
+  name          = "api-time-kube-cluster-subnet"
   ip_cidr_range = "10.0.0.0/24"
   network       = google_compute_network.vpc_network.id
   region        = var.region
@@ -17,13 +17,13 @@ resource "google_compute_subnetwork" "subnet" {
 
 
 resource "google_compute_router" "nat_router" {
-  name    = "g-nat-router"
+  name    = "api-time-kube-nat-router"
   network = google_compute_network.vpc_network.id
   region  = var.region
 }
 
 resource "google_compute_router_nat" "nat_gw" {
-  name                               = "nat-gw"
+  name                               = "api-time-kube-nat-gw"
   router                             = google_compute_router.nat_router.name
   region                             = var.region
   nat_ip_allocate_option             = "AUTO_ONLY"
@@ -45,7 +45,7 @@ resource "google_project_iam_binding" "gke_sa_role" {
 
 # Creating kubernetes Cluster
 resource "google_container_cluster" "gke_cluster" {
-  name     = "time-gke-cluster"
+  name     = "api-time-kube-cluster"
   location = var.region
 
   networking_mode = "VPC_NATIVE"
