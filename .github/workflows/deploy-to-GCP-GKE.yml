@@ -197,6 +197,12 @@ jobs:
 ##        run: terraform apply -auto-approve
 #        working-directory: terraform/gke-cluster
 
+      - name: Save GKE cluster directory
+        uses: actions/upload-artifact@v3
+        with:
+          name: gke-cluster
+          path: terraform/gke-cluster
+
       - name: Get GKE Cluster Name
         id: cluster_name
         run: echo "::set-output name=cluster_name::$(terraform output -raw cluster_name)"
@@ -266,6 +272,12 @@ jobs:
 ##        run: terraform apply -auto-approve
 #        working-directory: terraform/kubernetes-resources
 
+      - name: Save Kubernetes resources directory
+        uses: actions/upload-artifact@v3
+        with:
+          name: kubernetes-resources
+          path: terraform/kubernetes-resources
+
       - name: Verify Deployment
         run: |
           IP=$(terraform output -raw service_ip)
@@ -278,11 +290,17 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ failure() }}
     steps:
-      - name: Debug - Check if GKE directory exists
-        run: ls -alh terraform/gke-cluster
+      - name: Download GKE cluster directory
+        uses: actions/download-artifact@v3
+        with:
+          name: gke-cluster
+          path: terraform/gke-cluster
 
-      - name: Debug - Check if Kubernetes resources directory exists
-        run: ls -alh terraform/kubernetes-resources
+      - name: Download GKE cluster directory
+        uses: actions/download-artifact@v3
+        with:
+          name: gke-cluster
+          path: terraform/kubernetes-resources
 
       - name: Set up Google Cloud SDK
         uses: google-github-actions/setup-gcloud@v2
