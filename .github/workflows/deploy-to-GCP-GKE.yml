@@ -194,7 +194,7 @@ jobs:
         working-directory: terraform/gke-cluster
 
       - name: Apply Terraform to create GKE Cluster
-        run: terraform apply -auto-approve
+#        run: terraform apply -auto-approve
         working-directory: terraform/gke-cluster
 
       - name: Get GKE Cluster Name
@@ -263,7 +263,7 @@ jobs:
         working-directory: terraform/kubernetes-resources
 
       - name: Apply Terraform to configure Kubernetes resources
-        run: terraform apply -auto-approve
+#        run: terraform apply -auto-approve
         working-directory: terraform/kubernetes-resources
 
       - name: Verify Deployment
@@ -272,49 +272,17 @@ jobs:
           curl -f http://$IP/shortlet/time
         working-directory: terraform/kubernetes-resources
 
+
   cleanup-failure:
-    needs: [create-cluster, configure-k8s]
+#    needs: [create-cluster, configure-k8s]
     runs-on: ubuntu-latest
     if: ${{ failure() }}
     steps:
-      - name: Set up Google Cloud SDK
-        uses: google-github-actions/setup-gcloud@v2
-        with:
-          project_id: ${{ secrets.GCP_PROJECT_ID }}
-          service_account_key: ${{ secrets.GCP_SA_KEY }}
+      - name: Debug - Check if GKE directory exists
+        run: ls -alh terraform/gke-cluster
 
-      - name: Authenticate with Google Cloud
-        uses: google-github-actions/auth@v1
-        with:
-          credentials_json: ${{ secrets.GCP_SA_KEY }}
-
-      - name: Set up Terraform
-        uses: hashicorp/setup-terraform@v1
-
-#      - name: Initialize Terraform for GKE Cluster
-#        run: terraform init
-#        working-directory: terraform/gke-cluster
-
-
-      - name: Destroy GKE Cluster
-        run: terraform destroy -auto-approve
-        working-directory: terraform/gke-cluster
-
-#      - name: Initialize Terraform for Kubernetes Resources
-#        run: terraform init
-#        working-directory: terraform/kubernetes-resources
-
-      - name: Destroy Kubernetes Resources
-        run: terraform destroy -auto-approve
-        working-directory: terraform/kubernetes-resources
-
-  cleanup-success:
-    needs: [create-cluster, configure-k8s]
-    runs-on: ubuntu-latest
-    if: ${{ success() }}
-    steps:
-      - name: Wait before cleanup
-        run: sleep 180  # Wait for 3 minutes
+      - name: Debug - Check if Kubernetes resources directory exists
+        run: ls -alh terraform/kubernetes-resources
 
       - name: Set up Google Cloud SDK
         uses: google-github-actions/setup-gcloud@v2
@@ -345,6 +313,7 @@ jobs:
       - name: Destroy Kubernetes Resources
         run: terraform destroy -auto-approve
         working-directory: terraform/kubernetes-resources
+
 
 
 
