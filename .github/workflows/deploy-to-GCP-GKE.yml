@@ -274,7 +274,7 @@ jobs:
 
 
   cleanup-failure:
-#    needs: [create-cluster, configure-k8s]
+    needs: [create-cluster, configure-k8s]
     runs-on: ubuntu-latest
     if: ${{ failure() }}
     steps:
