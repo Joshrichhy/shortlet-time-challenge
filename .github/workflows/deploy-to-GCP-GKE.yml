@@ -193,9 +193,9 @@ jobs:
         run: terraform init
         working-directory: terraform/gke-cluster
 
-#      - name: Apply Terraform to create GKE Cluster
-##        run: terraform apply -auto-approve
-#        working-directory: terraform/gke-cluster
+      - name: Apply Terraform to create GKE Cluster
+        run: terraform apply -auto-approve
+        working-directory: terraform/gke-cluster
 
       - name: Save GKE cluster directory
         uses: actions/upload-artifact@v3
@@ -203,20 +203,9 @@ jobs:
           name: gke-cluster
           path: terraform/gke-cluster
 
-      - name: Get GKE Cluster Name
-        id: cluster_name
-        run: echo "::set-output name=cluster_name::$(terraform output -raw cluster_name)"
-        working-directory: terraform/gke-cluster
-
-      - name: Get GKE Cluster Zone
-        id: cluster_zone
-        run: echo "::set-output name=cluster_zone::$(terraform output -raw cluster_zone)"
-        working-directory: terraform/gke-cluster
-
-
       - name: Get GKE credentials
         run: |
-          gcloud container clusters get-credentials ${{ steps.cluster_name.outputs.cluster_name }} --zone ${{ steps.cluster_zone.outputs.cluster_zone }} --project ${{ secrets.GCP_PROJECT_ID }}
+          gcloud container clusters get-credentials time-gke-cluster --zone us-central1 --project ${{ secrets.GCP_PROJECT_ID }}
         working-directory: terraform/gke-cluster
 
   configure-k8s:
@@ -245,21 +234,17 @@ jobs:
           version: 'latest'
           install_components: 'kubectl'
 
-      - name: Get GKE Cluster Name
-        id: cluster_name
-        run: echo "::set-output name=cluster_name::$(terraform output -raw cluster_name)"
-        working-directory: terraform/gke-cluster
-
-      - name: Get GKE Cluster Zone
-        id: cluster_zone
-        run: echo "::set-output name=cluster_zone::$(terraform output -raw cluster_zone)"
-        working-directory: terraform/gke-cluster
+      - name: Download GKE cluster directory
+        uses: actions/download-artifact@v3
+        with:
+          name: gke-cluster
+          path: terraform/gke-cluster
 
 
       - name: Set up Kubernetes config
         run: |
           mkdir -p ~/.kube
-          gcloud container clusters get-credentials ${{ steps.cluster_name.outputs.cluster_name }} --zone ${{ steps.cluster_zone.outputs.cluster_zone }} --project ${{ secrets.GCP_PROJECT_ID }}
+          gcloud container clusters get-credentials time-gke-cluster --zone us-central1 --project ${{ secrets.GCP_PROJECT_ID }}
 
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v1
@@ -268,9 +253,9 @@ jobs:
         run: terraform init
         working-directory: terraform/kubernetes-resources
 
-#      - name: Apply Terraform to configure Kubernetes resources
-##        run: terraform apply -auto-approve
-#        working-directory: terraform/kubernetes-resources
+      - name: Apply Terraform to configure Kubernetes resources
+        run: terraform apply -auto-approve
+        working-directory: terraform/kubernetes-resources
 
       - name: Save Kubernetes resources directory
         uses: actions/upload-artifact@v3
@@ -331,6 +316,57 @@ jobs:
       - name: Destroy Kubernetes Resources
         run: terraform destroy -auto-approve
         working-directory: terraform/kubernetes-resources
+
+  cleanup-success:
+    needs: [ create-cluster, configure-k8s ]
+    runs-on: ubuntu-latest
+    if: ${{ success() }}
+    steps:
+      - name: Download GKE cluster directory
+        uses: actions/download-artifact@v3
+        with:
+          name: gke-cluster
+          path: terraform/gke-cluster
+
+      - name: Download GKE cluster directory
+        uses: actions/download-artifact@v3
+        with:
+          name: gke-cluster
+          path: terraform/kubernetes-resources
+
+      - name: Wait before cleanup
+        run: sleep 180  # Wait for 3 minutes
+
+      - name: Set up Google Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+          service_account_key: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Authenticate with Google Cloud
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v1
+
+      - name: Initialize Terraform for GKE Cluster
+        run: terraform init
+        working-directory: terraform/gke-cluster
+
+      - name: Destroy GKE Cluster
+        run: terraform destroy -auto-approve
+        working-directory: terraform/gke-cluster
+
+      - name: Initialize Terraform for Kubernetes Resources
+        run: terraform init
+        working-directory: terraform/kubernetes-resources
+
+      - name: Destroy Kubernetes Resources
+        run: terraform destroy -auto-approve
+        working-directory: terraform/kubernetes-resources
+
 
 
 

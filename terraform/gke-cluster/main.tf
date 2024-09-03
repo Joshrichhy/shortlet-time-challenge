@@ -4,7 +4,7 @@ provider "google" {
 }
 
 resource "google_compute_network" "vpc_network" {
-  name = "shortlet-time-vpc-network"
+  name = "shortlet-vpc-network"
 }
 
 
@@ -45,7 +45,7 @@ resource "google_project_iam_binding" "gke_sa_role" {
 
 # Creating kubernetes Cluster
 resource "google_container_cluster" "gke_cluster" {
-  name     = "time-api-gke-cluster"
+  name     = "time-gke-cluster"
   location = var.region
 
   networking_mode = "VPC_NATIVE"
