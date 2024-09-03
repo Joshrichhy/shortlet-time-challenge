@@ -4,7 +4,7 @@ provider "google" {
 }
 
 resource "google_compute_network" "vpc_network" {
-  name = "shortlet-vpc-network"
+  name = "time-api-vpc-network"
 }
 
 
