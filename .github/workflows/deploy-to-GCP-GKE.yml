@@ -197,9 +197,20 @@ jobs:
         run: terraform apply -auto-approve
         working-directory: terraform/gke-cluster
 
+      - name: Get GKE Cluster Name
+        id: cluster_name
+        run: echo "::set-output name=cluster_name::$(terraform output -raw cluster_name)"
+        working-directory: terraform/gke-cluster
+
+      - name: Get GKE Cluster Zone
+        id: cluster_zone
+        run: echo "::set-output name=cluster_zone::$(terraform output -raw cluster_zone)"
+        working-directory: terraform/gke-cluster
+
+
       - name: Get GKE credentials
         run: |
-          gcloud container clusters get-credentials $(terraform output -raw cluster_name) --zone $(terraform output -raw cluster_zone) --project ${{ secrets.GCP_PROJECT_ID }}
+          gcloud container clusters get-credentials ${{ steps.cluster_name.outputs.cluster_name }} --zone ${{ steps.cluster_zone.outputs.cluster_zone }} --project ${{ secrets.GCP_PROJECT_ID }}
         working-directory: terraform/gke-cluster
 
   configure-k8s:
@@ -228,10 +239,21 @@ jobs:
           version: 'latest'
           install_components: 'kubectl'
 
+      - name: Get GKE Cluster Name
+        id: cluster_name
+        run: echo "::set-output name=cluster_name::$(terraform output -raw cluster_name)"
+        working-directory: terraform/gke-cluster
+
+      - name: Get GKE Cluster Zone
+        id: cluster_zone
+        run: echo "::set-output name=cluster_zone::$(terraform output -raw cluster_zone)"
+        working-directory: terraform/gke-cluster
+
+
       - name: Set up Kubernetes config
         run: |
           mkdir -p ~/.kube
-          gcloud container clusters get-credentials $(terraform output -raw cluster_name) --zone $(terraform output -raw cluster_zone) --project ${{ secrets.GCP_PROJECT_ID }}
+          gcloud container clusters get-credentials ${{ steps.cluster_name.outputs.cluster_name }} --zone ${{ steps.cluster_zone.outputs.cluster_zone }} --project ${{ secrets.GCP_PROJECT_ID }}
 
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v1
@@ -269,17 +291,18 @@ jobs:
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v1
 
-      - name: Initialize Terraform for GKE Cluster
-        run: terraform init
-        working-directory: terraform/gke-cluster
+#      - name: Initialize Terraform for GKE Cluster
+#        run: terraform init
+#        working-directory: terraform/gke-cluster
+
 
       - name: Destroy GKE Cluster
         run: terraform destroy -auto-approve
         working-directory: terraform/gke-cluster
 
-      - name: Initialize Terraform for Kubernetes Resources
-        run: terraform init
-        working-directory: terraform/kubernetes-resources
+#      - name: Initialize Terraform for Kubernetes Resources
+#        run: terraform init
+#        working-directory: terraform/kubernetes-resources
 
       - name: Destroy Kubernetes Resources
         run: terraform destroy -auto-approve
