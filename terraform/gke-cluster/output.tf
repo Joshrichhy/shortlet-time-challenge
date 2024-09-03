@@ -6,11 +6,15 @@ output "cluster_endpoint" {
   value = google_container_cluster.gke_cluster.endpoint
 }
 
-# output "service_ip" {
-#   value = kubernetes_service.time_service.status[0].load_balancer[0].ingress[0].ip
-# }
-
-
 output "cluster_zone" {
   value = google_container_cluster.gke_cluster.location
+}
+
+
+output "gke_cluster_location" {
+  value = google_container_cluster.gke_cluster.location
+}
+
+output "vpc_network_id" {
+  value = google_compute_network.vpc_network.id
 }
