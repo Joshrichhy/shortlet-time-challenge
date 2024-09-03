@@ -193,9 +193,9 @@ jobs:
         run: terraform init
         working-directory: terraform/gke-cluster
 
-      - name: Apply Terraform to create GKE Cluster
-#        run: terraform apply -auto-approve
-        working-directory: terraform/gke-cluster
+#      - name: Apply Terraform to create GKE Cluster
+##        run: terraform apply -auto-approve
+#        working-directory: terraform/gke-cluster
 
       - name: Get GKE Cluster Name
         id: cluster_name
@@ -262,9 +262,9 @@ jobs:
         run: terraform init
         working-directory: terraform/kubernetes-resources
 
-      - name: Apply Terraform to configure Kubernetes resources
-#        run: terraform apply -auto-approve
-        working-directory: terraform/kubernetes-resources
+#      - name: Apply Terraform to configure Kubernetes resources
+##        run: terraform apply -auto-approve
+#        working-directory: terraform/kubernetes-resources
 
       - name: Verify Deployment
         run: |
