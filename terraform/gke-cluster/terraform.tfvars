@@ -1,3 +1,3 @@
-project_id           = "shortlet-time-challenge"
+project_id           = "shortly-time-api"
 region               = "us-central1"
-gke_service_account  = "gke-service-account@shortlet-time-challenge.iam.gserviceaccount.com"
+gke_service_account  = "gke-service-account@shortly-time-api.iam.gserviceaccount.com"
