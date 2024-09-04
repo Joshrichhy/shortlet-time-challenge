@@ -4,7 +4,7 @@ provider "google" {
 }
 
 resource "google_compute_network" "vpc_network" {
-  name = "api-time-vpc-network"
+  name = "api-time-kube-vpc-network"
 }
 
 
